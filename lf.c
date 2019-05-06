@@ -13,7 +13,21 @@
 //#include <signal.h>
 //#include <sys/ioctl.h>
 
+#include <stdio.h>
+#if defined(__linux__) //linux
+#define MYOS 1
+#elif defined(_WIN32)
+#define MYOS 2
+#elif defined(_WIN64)
+#define MYOS 3
+#elif defined(__unix__) 
+#define MYOS 4  // freebsd
 #define PATH_MAX 2500
+#else
+#define MYOS 0
+#endif
+
+///#define PATH_MAX 2500
 #define STMAX 2040
 
 
@@ -431,7 +445,7 @@ int main( int argc, char *argv[])
       if ( show_dir == 2 )
       {
 
-           if ( ch == 'k')      nexp_user_sel[pansel]--;
+           if ( ch == 'k')           nexp_user_sel[pansel]--;
            else if ( ch == 'j')      nexp_user_sel[pansel]++;
            else if ( ch == 'g')      { nexp_user_sel[pansel]=1; nexp_user_scrolly[pansel] = 0; }
            else if ( ch == 'G')      { nexp_user_sel[pansel]=1; nexp_user_scrolly[pansel] = 0; }
@@ -439,18 +453,19 @@ int main( int argc, char *argv[])
            else if ( ch == 'd')      nexp_user_scrolly[pansel]+=4;
            else if ( ch == 'n')      nexp_user_scrolly[pansel]+=4;
 
-       // view
-      else if ( ch == 'r' ) 
-        {  enable_waiting_for_enter();  nrunwith(  " lfv  ",  nexp_user_fileselection    );   }
-       // explorer
-      else if ( ch == 'e' )   {  enable_waiting_for_enter();  nsystem(  " lkm " );   } //regular
-      else if ( ch == 'E' )   {  enable_waiting_for_enter();  nsystem(  " lkm -1 " );   } //regular
-      else if ( ch == 't' )   {  enable_waiting_for_enter();  nsystem(  " lkmm " );  } //improved
-      //else if ( ch == 'T' )   {  enable_waiting_for_enter();  nsystem(  " lkmm -1 " );  } //improved
-      else if ( ch == 'T' )   {  enable_waiting_for_enter();  nsystem(  " lkmmc  " );  } //improved
-       // editor
-      else if ( ch == 'v' )   
-       {  enable_waiting_for_enter();  nrunwith(  " vim  ",  nexp_user_fileselection    );   }
+           else if ( ch == '[' )  
+           {
+              ch = getchar();
+              if ( ch ==   66 )  //     nsystem( "   export DISPLAY=:0 ; xdotool  key Down " );
+                         nexp_user_sel[pansel]++;
+              else if ( ch == 65 )    //   nsystem( "  export DISPLAY=:0 ;  xdotool  key Up " );
+                         nexp_user_sel[pansel]--;
+              else if ( ch == 68 )    //   nsystem( "  export DISPLAY=:0 ;  xdotool  key Left " );
+                         nexp_user_sel[pansel]--;
+              else if ( ch == 67 )    //   nsystem( "  export DISPLAY=:0 ;  xdotool  key Right " );
+                         nexp_user_sel[pansel]++;
+           }
+
 
       else if ( ch == 'z' ) 
       {
@@ -459,8 +474,7 @@ int main( int argc, char *argv[])
 
       // quick pan view
       else if ( ch == 'p') 
-      {
-            readfilesp( nexp_user_fileselection , 0 , rows-4 );
+      {     readfilesp( nexp_user_fileselection , 0 , rows-4 );
             getchar();
       }
 
