@@ -2,16 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <dirent.h>
 #include <unistd.h>  
 #include <time.h>
-
-//#include <signal.h>
-//#include <sys/ioctl.h>
 
 #include <stdio.h>
 #if defined(__linux__) //linux
